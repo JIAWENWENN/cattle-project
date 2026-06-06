@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL; // <-- 1. Added URL facade import
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // 2. Enforce secure https routing for all requests and assets in production
+        if (config('app.env') === 'production') {
+            URL::forceScheme('https');
+        }
+
         Schema::defaultStringLength(191);
         Vite::prefetch(concurrency: 3);
         $this->registerGlobalAuditObservers();
@@ -53,4 +59,3 @@ class AppServiceProvider extends ServiceProvider
         }
     }
 }
-
