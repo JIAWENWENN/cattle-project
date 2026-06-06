@@ -8,12 +8,13 @@ RUN composer install \
     --no-interaction \
     --no-scripts \
     --prefer-dist \
-    --optimize-autoloader
+    --optimize-autoloader \
+    --ignore-platform-req=ext-gd
 
 FROM node:22-alpine AS frontend
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci
+RUN npm install --legacy-peer-deps
 COPY --from=vendor /app/vendor/tightenco/ziggy ./vendor/tightenco/ziggy
 COPY vite.config.js postcss.config.js tailwind.config.js jsconfig.json ./
 COPY resources ./resources
